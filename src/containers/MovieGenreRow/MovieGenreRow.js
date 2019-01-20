@@ -3,69 +3,78 @@ import axios from '../../axios-movies';
 import MovieGenre from './MovieGenre'; 
 import Modal from "../../components/UI/Modal/Modal"; 
 import MovieDetails from '../../components/Movie/MovieDetails/MovieDetails'; 
+import { Dropbox } from 'dropbox';
+import { Player, ControlBar } from 'video-react';
 
 class MovieGenreRow extends Component {
 
   /** Hold each genre movie row in an array */
   state = {
-    movieOverview: {},
+    rows: [],
+    file: {},
     toggleModal: false,
   }
 
   /** Make all API calls as soon as our MovieGenreRow component mounts. */
   componentWillMount() {
-  }
-  
-  /** 
-   Get the movie details for a single movie 
-   @param {object} movieObject - A single movie object
-   */
-  getMovieDetails = (movieObject) => {
-    console.log(movieObject);
-    this.setState({ toggleModal: true }); 
-    this.setState({ movieOverview: movieObject }); 
-    
+    const self = this
+    const dbx = new Dropbox({ accessToken: 'w3mJDTw8SRUAAAAAAAAI54I3eg9xuDGE8hx-X6-nADr0L7tUZaHRbHEx1qF6QE1e' });
+    dbx.filesListFolder({path: '/TrapMusicMuseum'})
+      .then(function(response) {
+        const folders = response.entries.filter(entry => entry['.tag'] === 'folder').map(folder => {
+          // TODO: use getMovieRows
+          return dbx.filesListFolder({path: folder.path_lower}).then(files => {
+            const q = files.entries.map(file =>
+              dbx.filesGetTemporaryLink({ path: file.path_lower }).then(link => ({
+                ...file,
+                ...link,
+              }))
+            )
+
+            return Promise.all(q).then(files => ({
+              name: folder.name,
+              files,
+            }))
+          })
+        })
+        Promise.all(folders).then(rows => self.setState({ rows }))
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 
   closeModal = () => {
     this.setState({toggleModal: false})
   }
 
-
-  /** Extract our movie data and pass it to our MovieGenre Component. */
-  getMovieRows = (res, url) => {
-    const results = res.data.results; 
-    let movieRows = []; 
-     
-    results.forEach((movie) => {
-      let movieImageUrl = "https://image.tmdb.org/t/p/original/" + movie.backdrop_path;
-      if (url === "/discover/tv?api_key=224ce27b38a3805ecf6f6c36eb3ba9d0&with_networks=213") {
-        movieImageUrl = "https://image.tmdb.org/t/p/original/" + movie.poster_path;
-      }
-      
-      if (movie.poster_path && movie.backdrop_path !== null) {
-       
-        const movieComponent = <MovieGenre
-          movieDetailsModal={() => this.getMovieDetails(movie)}
-          key={movie.id}
-          url={url}
-          posterUrl={movieImageUrl}
-          movie={movie} />
-        movieRows.push(movieComponent);
-      }
-    })
-    
-   return movieRows; 
-       
+  showModal = (file) => {
+    this.setState({ file, toggleModal: true })
   }
 
    render() {
 
       return (  
         <div className="movieShowcase">
-          <Modal show={this.state.toggleModal} modalClosed={this.closeModal} movie={this.state.movieOverview}>
-            <MovieDetails movie={this.state.movieOverview}/>
-          </Modal>
+          {this.state.rows.map(row =>
+            <div key={row.id}>
+              <h1 className="movieShowcase__heading">{row.name}</h1>
+              <div className="movieShowcase__container">
+                {row.files.map(file =>
+                  <div key={file.id} className="movieShowcase__container--movie" onClick={() => this.showModal(file)}>
+                    <video>
+                      <source src={file.link} />
+                    </video>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          {this.state.toggleModal ? <Modal show={true} modalClosed={this.closeModal} movie={this.state.file}>
+            <Player src={this.state.file.link} autoPlay loop>
+              <ControlBar autoHide={true} />
+            </Player>
+          </Modal> : null}
         </div>
       );
    }
