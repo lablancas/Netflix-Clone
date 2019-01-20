@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import NavigationItem from '../../components/NavigationItem/NavigationItem'
 import SearchLogo from '../../static/images/search-icon.svg'; 
 import NetflixLogo from '../../static/images/Netflix_Logo_RGB.png'; 
+import Logo from '../../static/images/logo.png';
 import BellLogo from '../../static/images/bell-logo.svg';
 import DropdownArrow from '../../static/images/drop-down-arrow.svg'; 
 import DropdownContent from "./DropdownContent"; 
@@ -37,7 +38,7 @@ class navigation extends Component {
     return (
       <nav className={"navigation " + (this.state.scrolling ? "black" : "")} >
         <ul className="navigation__container">
-          <NavigationItem link="/" exact><img className="navigation__container--logo" src={NetflixLogo} alt=""/></NavigationItem>
+          <NavigationItem link="/" exact><img className="navigation__container--logo" src={Logo} alt=""/></NavigationItem>
         </ul>
       </nav>
     )
