@@ -22,8 +22,12 @@
          width: 98vw;
       }
 
-      &--movie > video {
-          height: 100%;
+      &--movie {
+          width: 200px;
+
+          > video {
+              height: 100%;
+          }
       }
 
       &:hover &--movie {

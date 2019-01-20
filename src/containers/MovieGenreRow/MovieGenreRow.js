@@ -15,7 +15,6 @@ class MovieGenreRow extends Component {
   state = {
     rows: [],
     file: {},
-    toggleModal: false,
   }
 
   /** Make all API calls as soon as our MovieGenreRow component mounts. */
@@ -38,14 +37,6 @@ class MovieGenreRow extends Component {
       });
   }
 
-  closeModal = () => {
-    this.setState({toggleModal: false})
-  }
-
-  showModal = (file) => {
-    this.setState({ file, toggleModal: true })
-  }
-
    render() {
 
       return (
@@ -56,17 +47,12 @@ class MovieGenreRow extends Component {
               <div className="movieShowcase__container">
                 {row.files.map(file =>
                   <div key={file.id} className="movieShowcase__container--movie">
-                    <Thumbnail {...file}  onClick={this.showModal}/>
+                    <Thumbnail {...file} />
                   </div>
                 )}
               </div>
             </div>
           )}
-          {this.state.toggleModal ? <Modal show={true} modalClosed={this.closeModal} movie={this.state.file}>
-            <Player src={this.state.file.link} autoPlay loop>
-              <ControlBar autoHide={true} />
-            </Player>
-          </Modal> : null}
         </div>
       );
    }
