@@ -7,6 +7,8 @@ import MovieGenre from './MovieGenre';
 import Modal from "../../components/UI/Modal/Modal";
 import MovieDetails from '../../components/Movie/MovieDetails/MovieDetails';
 
+import Thumbnail from './Thumbnail';
+
 class MovieGenreRow extends Component {
 
   /** Hold each genre movie row in an array */
@@ -23,20 +25,11 @@ class MovieGenreRow extends Component {
     dbx.filesListFolder({path: '/TrapMusicMuseum'})
       .then(function(response) {
         const folders = response.entries.filter(entry => entry['.tag'] === 'folder').map(folder => {
-          // TODO: use getMovieRows
-          return dbx.filesListFolder({path: folder.path_lower}).then(files => {
-            const q = files.entries.map(file =>
-              dbx.filesGetTemporaryLink({ path: file.path_lower }).then(link => ({
-                ...file,
-                ...link,
-              }))
-            )
-
-            return Promise.all(q).then(files => ({
-              name: folder.name,
-              files,
-            }))
-          })
+          return dbx.filesListFolder({path: folder.path_lower}).then(files => ({
+            id: folder.id,
+            name: folder.name,
+            files: files.entries,
+          }))
         })
         Promise.all(folders).then(rows => self.setState({ rows }))
       })
@@ -55,17 +48,15 @@ class MovieGenreRow extends Component {
 
    render() {
 
-      return (  
+      return (
         <div className="movieShowcase">
           {this.state.rows.map(row =>
             <div key={row.id}>
               <h1 className="movieShowcase__heading">{row.name}</h1>
               <div className="movieShowcase__container">
                 {row.files.map(file =>
-                  <div key={file.id} className="movieShowcase__container--movie" onClick={() => this.showModal(file)}>
-                    <video>
-                      <source src={file.link} />
-                    </video>
+                  <div key={file.id} className="movieShowcase__container--movie">
+                    <Thumbnail {...file}  onClick={this.showModal}/>
                   </div>
                 )}
               </div>
@@ -81,4 +72,4 @@ class MovieGenreRow extends Component {
    }
 }
 
-export default MovieGenreRow; 
+export default MovieGenreRow;
