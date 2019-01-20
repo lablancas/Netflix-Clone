@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import axios from '../../axios-movies'; 
-import MovieGenre from './MovieGenre'; 
-import Modal from "../../components/UI/Modal/Modal"; 
-import MovieDetails from '../../components/Movie/MovieDetails/MovieDetails'; 
 import { Dropbox } from 'dropbox';
 import { Player, ControlBar } from 'video-react';
+import axios from '../../axios-movies';
+import MovieGenre from './MovieGenre';
+import Modal from "../../components/UI/Modal/Modal";
+import MovieDetails from '../../components/Movie/MovieDetails/MovieDetails';
 
 class MovieGenreRow extends Component {
 
