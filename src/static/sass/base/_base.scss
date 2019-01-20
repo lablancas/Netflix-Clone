@@ -65,3 +65,7 @@ html {
 	grid-template-rows: min-content min-content min-content min-content; 
 	grid-template-columns:  4% repeat(10, 1fr) 4%;
 }
+
+.navigation + .container {
+    padding-top: 6.7rem;
+}
