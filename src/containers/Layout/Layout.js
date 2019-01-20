@@ -110,17 +110,7 @@ class Layout extends Component {
     return (
       <div>
         <Navbar showMovies={this.onSearchHandler} />
-        {
-          this.state.toggleMovieList ? <MainContent /> : <div
-          className="search-container">{this.state.MovieList}</div>
-        }
-
-        <Modal show={this.state.toggleModal} 
-               modalClosed={this.closeModal} 
-               movie={this.state.movieOverview}>
-          
-          <MovieDetails movie={this.state.movieOverview} />
-        </Modal>
+        <MainContent />
       </div>
 
     );

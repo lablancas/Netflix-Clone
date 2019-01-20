@@ -38,9 +38,7 @@ class MainContent extends Component {
     return (
       <BrowserRouter>
         <div className="container">
-          <Header movie={this.state.selectedMovie} />
           <MovieGenreRow />
-          <Footer />
         </div>
       </BrowserRouter>
     );
